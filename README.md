@@ -4,11 +4,11 @@ Play ISPY with a web app built with React, TypeScript, Chakra.ui, React Responsi
 
 ## Tech 
 
-# React.js 
-# TypeScript
-# Chakra.ui 
-# React-responsive
-# Firebase 
+#React.js 
+#TypeScript
+#Chakra.ui 
+#React-responsive
+#Firebase 
 
 ## Images 
 
@@ -18,3 +18,6 @@ Play ISPY with a web app built with React, TypeScript, Chakra.ui, React Responsi
 
 Thank you Walter Wick for giving me an imaginative childhood. The feeling of looking at your art is indescribable.
 
+:heart: 
+
+Cho
