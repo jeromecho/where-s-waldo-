@@ -9,16 +9,20 @@ import MAGNIFYING_GLASS from '../img/magnifying-glass.webp';
 
 export interface GameSidebarProps {
     items: Array<Item>;
+    onMouseEnter: () => void;
+    onMouseLeave: () => void;
 }
 
 const GameSidebar: React.FunctionComponent<GameSidebarProps> = ({
     items,
+    onMouseEnter,
+    onMouseLeave,
 }) => {
     // TODO - to use
     const isDesktopOrLaptop = useMediaQuery({
         query: '(min-width: 400px)'
     });
-    let [time, setTime] = useState<number>(0);
+    const [ time, setTime ] = useState<number>(0);
 
     useEffect(() => {
         const updateInterval = 10;
@@ -34,6 +38,16 @@ const GameSidebar: React.FunctionComponent<GameSidebarProps> = ({
             removeInterval(intervalId);
         }
     }, []);
+
+    const prettifyTime = (time: number): string => {
+        return (
+            (Math.floor(time / 3600)).toString() +
+            ':' + 
+            (Math.floor(time / 60)).toString() +
+            ':' +
+            ((Math.floor((time % 60) * 10000)) / 10000).toString()
+        );
+    };
 
     return (
         <Flex 
@@ -54,17 +68,15 @@ const GameSidebar: React.FunctionComponent<GameSidebarProps> = ({
                     src={TIMER} 
                     w='1rem'/>
                     <Image 
+                    onMouseEnter={onMouseEnter}
+                    onMouseLeave={onMouseLeave}
                     h='1.5rem'
                     src={TROPHY}
                     w='1.5rem'/>
                 </Flex>
                 <Flex flexDir='column'>
                     <Text>{
-                        (Math.floor(time / 3600)).toString() +
-                        ':' + 
-                        (Math.floor(time / 60)).toString() +
-                        ':' +
-                        ((Math.floor((time % 60) * 10000)) / 10000).toString() 
+                        prettifyTime(time)
                     }</Text>
                     <Text>LEADERBOARD</Text>
                 </Flex>

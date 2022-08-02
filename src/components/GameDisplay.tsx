@@ -8,20 +8,28 @@ export interface GameDisplayProps {
 const GameDisplay: React.FunctionComponent<GameDisplayProps> = ({
     map
 }) => {
-    let maxX; 
-    let maxY;
-    let xMargin;  
-    let yMargin;
+    const [dummy, setDummy] = useState<string>('');
+    const aspectRatio: number = getAspectRatio();
+    const bgH: number = 1600;
+    const bgW: number = bgH * aspectRatio;
+    const display = useRef<HTMLDivElement | null>(null);
+    let xMargin: number;  
+    let yMargin: number;
+    let displayW: number;
+    let displayH: number;
 
     let isActive: boolean = false; 
     let [prevMouseX, prevMouseY]: Array<number> = [0, 0];
 
-    const handleMouseClick = (e: MouseEvent): void => {
-        [maxX, maxY] = getNums(window.getComputedStyle(e.currentTarget).backgroundSize);
-        [xMargin, yMargin] = [maxX / 2, maxY / 2];
-    };
+    // Force re-render on mount to get ref
+    useEffect(() => {
+        setDummy('dummy');
+    });
+
+    window.addEventListener('resize', updateDisplayDimensions);
 
     const handleMouseDown = (e: MouseEvent): void => {
+        configureMarginsFromDisplayDimensions(e);
         isActive = true;
         e.currentTarget.style.cursor = 'grabbing';
         [prevMouseX, prevMouseY] = getCoordsFromContainer(e);
@@ -56,12 +64,15 @@ const GameDisplay: React.FunctionComponent<GameDisplayProps> = ({
     };
 
     function getNums (vals: string): Array<number> {
-        console.log(vals);
-        const [x, y] = vals.split(' ');
-        return [
-            Number(x.slice(0, x.length - 2)),
-            Number(y.slice(0, y.length - 2))
-        ];
+        const results = [];
+        const arr = vals.split(' ');
+
+        for (let val of arr) { 
+            results.push(
+                Number(val.slice(0, val.length - 2))
+            );
+        }
+        return results;
     };
 
     function isAtBoundary (pos: Array<number>): Boolean {
@@ -72,18 +83,36 @@ const GameDisplay: React.FunctionComponent<GameDisplayProps> = ({
             y > 0;
     };
 
+    function getAspectRatio(): number {
+        const bgImg = new Image();
+        bgImg.src = map;
+        return bgImg.naturalWidth / bgImg.naturalHeight;
+    }
+
+    function configureMarginsFromDisplayDimensions(e: MouseEvent): void {
+        updateDisplayDimensions();
+        [xMargin, yMargin] = [bgW - displayW, bgH - displayH];
+    }
+
+    function updateDisplayDimensions(): void {
+        if (display.current) {
+            [ displayW ] = getNums(window.getComputedStyle(display.current).width);
+            [ displayH ] = getNums(window.getComputedStyle(display.current).height);
+        }
+    }
+
     return (
         <Flex 
-            onClick={handleMouseClick}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
             h='100%'
             bgImage={map}
             bgPos= '0px 0px'
-            backgroundSize='auto 2000px'
+            backgroundSize={`${bgW}px ${bgH}px`}
             backgroundRepeat='no-repeat'
             cursor= 'grab'
+            ref={display}
             w='100%'
         >
             {/* Make bgimage draggable */}

@@ -13,7 +13,10 @@ export interface AppProps {
     }
 }
 
-
+export interface LeaderboardItem {
+    name: string;
+    time: number;
+};
 
 const App: React.FunctionComponent<AppProps> = ({
 
@@ -48,7 +51,9 @@ const App: React.FunctionComponent<AppProps> = ({
                 <Routes>
                     <Route path='/' element={<Homepage />} />
                     <Route path='/select' element={<SelectPage />} />
-                    <Route path='/game/:map' element={<GamePage />} />
+                    <Route 
+                        path='/game/:map' 
+                        element={<GamePage leaderboard={getLeaderboard()} />} />
                     <Route path='/leaderboard' element={<LeaderboardPage />} />
                 </Routes>
             </Router>
